@@ -1,0 +1,15 @@
+%dw 2.0
+
+type auto_5756aa6f_7dbb_4007_ac6f_28d892440e41_Output_Payload = {
+  firstName: String, 
+  lastName: String, 
+  preferences?: Array<"DOCUMENTARIES" | "SPORTS" | "TV_SHOWS" | "MOVIES">, 
+  addresses: Array<{    zipcode: String,     country: String,     address: String,     city: String,     neighborhood: String,     complement?: String,     primary: Boolean,     _?: Any  }>, 
+  paymnetMethods: Array<{    name: String,     id: String,     creditCard: {      number: String,       holderName: String,       cvv?: String,       expiration: {        month: Number,         year: Number,         _?: Any      },       id: String,       "type": "AMEX" | "MASTERCARD" | "DISCOVER" | "DINNERS" | "VISA",       _?: Any    },     primary: Boolean,     _?: Any  }>, 
+  gender?: "GENDERLESS" | "MALE" | "FEMALE", 
+  telephones: Array<{    number: String,     countryCode: String,     "type": "WIRE_LINE" | "MOBILE",     _?: Any  }>, 
+  birthDate: String, 
+  email: String, 
+  _?: Any
+}
+

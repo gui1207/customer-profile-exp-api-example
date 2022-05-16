@@ -1,0 +1,123 @@
+#%RAML 1.0 Library
+usage: Common Lib is used to share common fragments across different projects
+
+uses:
+  commonTypes: common-types.raml
+
+resourceTypes:
+  collectionReadOnly:
+    usage: Use this resourceType to represent any collection of items for read only operations
+    description: A collection of <<resourcePathName>>
+    get:
+      description: Get all <<resourcePathName>>, optionally filtered 
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<getTypeName>>
+              example: <<getTypeNameExample>>
+  collection:
+    usage: Use this resourceType to represent any collection of items
+    description: A collection of <<resourcePathName>>
+    get:
+      description: Get all <<resourcePathName>>, optionally filtered 
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<getTypeName>>
+              example: <<getTypeNameExample>>
+              
+    post:
+      description: Create a new <<resourcePathName|!singularize>> 
+      body:
+        application/json:
+          type: <<typeName>>
+          example: <<typeNameExample>>
+          
+      responses:
+        201:
+          body:
+            application/json:
+              type: <<responseTypeName>>
+              example: <<responseTypeNameExample>>
+
+  itemReadOnly:
+    usage: Use this resourceType to represent any single item for read only operations
+    description: A single <<resourcePathName|!singularize>> 
+    get:
+      description: Get a <<resourcePathName|!singularize>> 
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<getTypeName>>
+              example: <<getTypeNameExample>>
+  
+  itemOperations:
+    usage: Use this resourceType to represent any single item in operations - UPDATE and DELETE
+    description: A single <<resourcePathName|!singularize>> 
+    type: itemReadOnly
+
+    put:
+      description: Update a <<resourcePathName|!singularize>> 
+      body:
+        application/json:
+          type: <<typeName>>
+          example: <<typeNameExample>>
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<responseTypeName>>
+              example: <<responseTypeNameExample>>
+    delete:
+      description: Delete a <<resourcePathName|!singularize>> 
+      responses:
+        204:
+
+traits:
+  httpErrors:
+    responses:
+      400:
+        body:
+          application/json:
+            type: commonTypes.error
+            example:
+              message: Bad request
+      401:
+        body:
+          application/json:
+              type: commonTypes.error
+              example:
+                message: Unauthorized
+      404:
+        body:
+          application/json:
+              type: commonTypes.error
+              example: 
+                message: Resource not found
+      405:
+        body:
+          application/json:
+              type: commonTypes.error
+              example: 
+                message: Method not allowed
+      406:
+        body:
+          application/json:
+              type: commonTypes.error
+              example: 
+                message: Not acceptable
+      415:
+        body:
+          application/json:
+              type: commonTypes.error
+              example: 
+                message: Unsupported media type 
+      501:
+        body:
+          application/json:
+              type: commonTypes.error
+              example: 
+                message: Not Implemented

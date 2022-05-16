@@ -1,0 +1,23 @@
+https:
+  port: "8082"
+  
+apiId: "16738362"
+  
+tls:
+  password: "Mul3#2022"
+  
+customer-prc:  
+  host: "anypoint.mulesoft.com"
+  port: "443"
+  protocol: "HTTPS"
+  clientId: "xxx"
+  clientSecret: "xxx"
+  basePath: "/mocking/api/v1/links/f197c0cc-1476-4eac-b2f6-16d1b76af2fc"
+
+account-prc:
+  host: "anypoint.mulesoft.com"
+  port: "443"
+  protocol: "HTTPS"
+  clientId: "xxx"
+  clientSecret: "xxx"
+  basePath: "/mocking/api/v1/links/01872c30-312a-4f49-ae46-6401dc8c0606"

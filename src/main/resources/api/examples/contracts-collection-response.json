@@ -1,0 +1,30 @@
+[
+  {
+    "id": "bb517650-38b7-4055-9332-21aea06fe566",
+    "customerId": "cec719c0-1492-4696-ba40-763d1b6bec2f",
+    "initiation": "2021-01-01T12:00:00",
+    "expiration": "2022-01-01T12:00:00",
+    "services": [
+      {
+        "id": "db898fb7-485c-4fa2-b498-5c552164d963",
+        "type": "BROADBAND"
+      }
+    ],
+    "totalAmount": {
+      "currency": "GBP",
+      "amount": 30
+    },
+    "broadband": [
+      {
+        "id": "c4db63c8-2eb9-4111-97b0-698991b2e2fa",
+        "contractId": "bb517650-38b7-4055-9332-21aea06fe566",
+        "networkdStatus": "ACTIVE",
+        "maxSpeed": 500,
+        "minSpeed": 100,
+        "linkData": {
+          "used": 6560
+        }
+      }
+    ]
+  }
+]

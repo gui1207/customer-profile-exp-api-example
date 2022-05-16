@@ -1,0 +1,70 @@
+#%RAML 1.0
+title: Customer Profile Experience API
+version: v1
+
+description: This API provides a unified experience to Mobile and Web App to interact with the Customer Profile 
+
+protocols:
+  - HTTPS
+
+mediaType: 
+- application/json
+
+securitySchemes:
+  oauth2: !include /exchange_modules/31e2cf0e-99d9-4cce-8db0-41bd08bc1186/oauth-security/1.0.2/oauth-security.raml
+
+securedBy:
+  - oauth2
+
+uses:
+  commonResources: /exchange_modules/31e2cf0e-99d9-4cce-8db0-41bd08bc1186/common-types/1.0.4/common-resources.raml
+  commonTypes: /exchange_modules/31e2cf0e-99d9-4cce-8db0-41bd08bc1186/common-types/1.0.4/common-types.raml
+  customer: /types/customer-lib.raml
+  contract: /types/contract-lib.raml
+
+resourceTypes:
+  customers: 
+    type:
+      commonResources.collectionReadOnly:
+        getTypeName: customer.customerProfile[]
+        getTypeNameExample: !include /examples/customer-profile-collection.json 
+  customerItem:
+    type:
+      commonResources.itemReadOnly:
+        getTypeName: customer.customerProfile
+        getTypeNameExample: !include /examples/customer-profile.json
+
+  contracts:
+    type:
+      commonResources.collectionReadOnly:
+        getTypeName: contract.contractDataResponse[]
+        getTypeNameExample: !include /examples/contracts-collection-response.json
+
+  contractItem:
+    type:
+      commonResources.itemReadOnly:
+        getTypeName: contract.contractDataResponse
+        getTypeNameExample: !include /examples/contract-response.json
+
+/customers:
+  type: customers
+
+  /{customerId}:
+    type: customerItem
+
+    /contracts:
+      type: contracts
+          
+      /{contractId}:              
+        type: contractItem
+
+  /me:
+    securedBy: [oauth2: {scopes: customer}]
+    type: 
+      customerItem:
+
+    /contracts:
+      type: contracts
+          
+      /{contractId}: 
+        type: contractItem

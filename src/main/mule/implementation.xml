@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:customer-data-process-api="http://www.mulesoft.org/schema/mule/customer-data-process-api" xmlns:account-data-process-api="http://www.mulesoft.org/schema/mule/account-data-process-api"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/account-data-process-api http://www.mulesoft.org/schema/mule/account-data-process-api/current/mule-account-data-process-api.xsd
+http://www.mulesoft.org/schema/mule/customer-data-process-api http://www.mulesoft.org/schema/mule/customer-data-process-api/current/mule-customer-data-process-api.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	
+	
+	<sub-flow name="getCustomers" doc:id="c8d2d356-d91d-42d7-a120-0b20d0875bf0" >		
+		<http:request method="GET" doc:name="Get customers" doc:id="32cc7c2f-7b26-45b9-96e8-18533edd179c" config-ref="HTTP_Request_Customer_Prc_API" path="/customers">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('customer-prc.clientSecret'),
+	"client_id" : Mule::p('customer-prc.clientId')
+}]]]></http:headers>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</sub-flow>
+	<sub-flow name="getCustomerById" doc:id="5756aa6f-7dbb-4007-ac6f-28d892440e41">
+		<http:request method="GET" doc:name="Get customer by customer id" doc:id="e1280d97-3e83-450d-9895-4ff97f0cca42" config-ref="HTTP_Request_Customer_Prc_API" path="/customers/{customerId}">
+				<http:headers><![CDATA[#[output application/java
+	---
+	{
+		"client_id" : Mule::p('customer-prc.clientId'),
+		"client_secret" : Mule::p('customer-prc.clientSecret')
+	}]]]></http:headers>
+			<http:uri-params><![CDATA[#[output application/java
+---
+{
+	"customerId" : vars.customerId
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Response">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</sub-flow>
+	<sub-flow name="getContracts" doc:id="b351e0b9-f167-4262-a00d-d089c2a56de2" >
+		<http:request method="GET" doc:name="Get contracts" doc:id="3b4a3904-4f5d-4613-8161-50c4adb987cf" config-ref="HTTP_Request_Account_Prc_API" path="/contracts">
+				<http:headers ><![CDATA[#[output application/java
+	---
+	{
+		"client_id" : Mule::p('customer-prc.clientId'),
+		"client_secret" : Mule::p('customer-prc.clientSecret')
+	}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"customerId" : vars.customerId
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</sub-flow>
+	<sub-flow name="getContractById" doc:id="07b44675-f44f-4e19-aac4-935be0ad7637" >
+		<http:request method="GET" doc:name="Get contract by contract id" doc:id="8f4ff161-de13-4795-ad45-7bbb0f510b8e" config-ref="HTTP_Request_Account_Prc_API" path="/contracts/{contractId}">
+				<http:headers ><![CDATA[#[output application/java
+	---
+	{
+		"client_id" : Mule::p('customer-prc.clientId'),
+		"client_secret" : Mule::p('customer-prc.clientSecret')
+	}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"contractId" : vars.contractId
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</sub-flow>	
+	
+	
+</mule>

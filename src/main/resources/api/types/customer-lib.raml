@@ -1,0 +1,81 @@
+#%RAML 1.0 Library
+usage:
+
+types:
+  customerProfile:
+    type: object
+    properties:
+      firstName:
+      lastName:
+      gender?:
+        enum:
+          - MALE
+          - FEMALE
+          - GENDERLESS
+      birthDate: date-only
+      email:
+      preferences?: 
+        type: array
+        items:  
+          enum:
+            - TV_SHOWS
+            - SPORTS
+            - MOVIES
+            - DOCUMENTARIES
+      addresses:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+            complement?:
+            neighborhood:  
+            zipcode:
+            city:
+            country:
+              pattern: ^[A-Z]{2}
+            primary: boolean
+      telephones:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              enum:
+                - WIRE_LINE
+                - MOBILE
+            countryCode:
+            number:
+      paymnetMethods:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+            name:
+            primary: boolean
+            creditCard:
+              properties:
+                id:
+                holderName:
+                type:
+                  enum:
+                    - AMEX
+                    - DINNERS
+                    - VISA
+                    - MASTERCARD
+                    - DISCOVER
+                number:
+                expiration:
+                  type: object
+                  properties:
+                    month: 
+                      type: integer
+                      minimum: 1
+                      maximum: 12
+                    year:
+                      type: integer
+                      minimum: 2021
+                      maximum: 2099
+                cvv?:
+                  pattern: \d{3}

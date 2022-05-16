@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:account-data-process-api="http://www.mulesoft.org/schema/mule/account-data-process-api" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:customer-data-process-api="http://www.mulesoft.org/schema/mule/customer-data-process-api" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/customer-data-process-api http://www.mulesoft.org/schema/mule/customer-data-process-api/current/mule-customer-data-process-api.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/account-data-process-api http://www.mulesoft.org/schema/mule/account-data-process-api/current/mule-account-data-process-api.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+    <apikit:config name="customer-profile-experience-api-config" api="customer-profile-experience-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    
+	<flow name="customer-profile-experience-api-main">
+        <http:listener config-ref="api-httpsListenerConfig" path="/api/v1/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <set-variable value="#[read(authentication.properties.'tokenContext' as String default '{}', 'application/json').'scope']" doc:name="Set scope" doc:id="bcebaadf-6c3e-4861-9d75-d058fd0c7119" variableName="scope"/>
+		<choice doc:name="Choice" doc:id="1539beb5-125b-480a-ba31-f2ba3eb18821" >
+			<when expression='#["customer" == vars.scope]'>
+				<set-variable value="#[authentication.properties.'userProperties'.'customerId' default &quot;&quot;]" doc:name="Set customerId" doc:id="03c79c93-9213-42ed-aedb-48928fc2abbb" variableName="customerId" />
+				<validation:is-not-blank-string doc:name="Is not blank string" doc:id="53956b42-39cb-44da-9977-c09ddce3ea17" value="#[vars.customerId]" message="CustomerId is not present"/>
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger" doc:id="027924b0-c221-4021-839e-dd4eab04e82b" />
+			</otherwise>
+		</choice>
+		<apikit:router config-ref="customer-profile-experience-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST, VALIDATION:BLANK_STRING" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="15e1d10d-4152-4d20-ac97-4fd1fc72d25e" >
+				<ee:transform doc:name="Transform Message" doc:id="1268414c-73c0-4823-a2d3-2a055af54e57" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{message: error.description}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[error.muleMessage.attributes.statusCode default 500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\customers:customer-profile-experience-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="9dc49260-80fa-404b-84b9-2c1359981b98" />
+		<flow-ref doc:name="Call getCustomers" doc:id="cac801ea-8f26-4561-b706-3c0029de23cd" name="getCustomers" />
+    </flow>
+    <flow name="get:\customers\(customerId):customer-profile-experience-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="d61b33e4-9fea-4873-bc06-0562f37bc1fd" />
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:variables>
+                <ee:set-variable variableName="customerId">attributes.uriParams.'customerId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="Call getCustomerById" doc:id="215f4466-b5da-4caf-9d1d-deca37642cf2" name="getCustomerById" />
+    </flow>
+    <flow name="get:\customers\me:customer-profile-experience-api-config">
+    	<validation:is-not-blank-string doc:name="Is not blank string" doc:id="e8865b9c-0b5e-4d57-8e50-e862ffa8ca9e" value="#[vars.customerId]" message="CustomerId is not present"/>
+		<flow-ref doc:name="Call getCustomerById" doc:id="a107f048-a760-4c56-8580-e0643180d53b" name="getCustomerById" />
+    </flow>
+    <flow name="get:\customers\me\contracts:customer-profile-experience-api-config">
+        <validation:is-not-null doc:name="Is not null" doc:id="6a453f49-cd93-4648-a15b-66ca5ecf8073" value="#[vars.customerid]"/>
+		<flow-ref doc:name="Call getContracts" doc:id="8f8031a5-c3c5-4c6f-ad4a-f70933085bbe" name="getContracts" />
+    </flow>
+    <flow name="get:\customers\(customerId)\contracts:customer-profile-experience-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:variables>
+                <ee:set-variable variableName="customerId">attributes.uriParams.'customerId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="Call getContracts" doc:id="c127369c-bfca-43f8-b080-1f0ad030c8de" name="getContracts" />
+    </flow>
+    <flow name="get:\customers\me\contracts\(contractId):customer-profile-experience-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:variables>
+                <ee:set-variable variableName="contractId">attributes.uriParams.'contractId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <validation:is-not-blank-string doc:name="Is not blank string" doc:id="6abcb73b-9f4a-4deb-8a94-b71c687d29d1" value="#[vars.customerId]" message="CustomerId is not present"/>
+		<flow-ref doc:name="Call getContractById" doc:id="91e84703-0f2a-455f-aab5-602c378abacd" name="getContractById" />
+    </flow>
+    <flow name="get:\customers\(customerId)\contracts\(contractId):customer-profile-experience-api-config">
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:variables>
+                <ee:set-variable variableName="customerId">attributes.uriParams.'customerId'</ee:set-variable>
+                <ee:set-variable variableName="contractId">attributes.uriParams.'contractId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="Call getContractById" doc:id="b7983198-9e24-4ca4-87f2-92129d616883" name="getContractById" />
+    </flow>
+</mule>

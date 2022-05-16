@@ -1,0 +1,67 @@
+#%RAML 1.0 Library
+usage:
+
+uses:
+  commonTypes: /exchange_modules/31e2cf0e-99d9-4cce-8db0-41bd08bc1186/common-types/1.0.4/common-types.raml
+
+types:
+  contractDataResponse:
+    type: object
+    properties:
+      id: commonTypes.uuid
+      customerId: commonTypes.uuid
+      initiation: datetime-only
+      expiration: datetime-only
+      services:
+        type: array
+        items:
+          type: object
+          properties:
+            id: commonTypes.uuid
+            type:
+              enum:
+                - BROADBAND
+                - TV
+                - TELEPHONE
+                - MOBILE
+      totalAmount: commonTypes.amount
+      broadband?:
+        type: array
+        items:
+          type: object
+          properties:
+            id: commonTypes.uuid
+            contractId: commonTypes.uuid
+            networkdStatus:
+              enum:
+                - ACTIVE
+                - DISABLED
+                - ERROR
+            maxSpeed: number
+            minSpeed: number
+            linkData:
+              type: object
+              properties:
+                used: number
+      billingHistory?:
+        type: array
+        items:
+          type: object
+          properties:
+            id: commonTypes.uuid
+            contractId: commonTypes.uuid
+            customerId: commonTypes.uuid
+            timestamp: datetime
+            totalAmount: commonTypes.amount
+            status:
+              enum:
+                - SUCCESSFUL
+                - CANCELLED
+                - FAILED
+                - PENDING    
+            paymentMethodInfo:
+              type: object
+              properties:
+                paymnetMethodNumber:
+                paymentMethodType:
+    

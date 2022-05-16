@@ -1,0 +1,52 @@
+{
+  "id": "cec719c0-1492-4696-ba40-763d1b6bec2f",
+  "firstName": "Guilherme",
+  "lastName": "Pereira",
+  "gender": "MALE",
+  "birthDate": "1984-07-12",
+  "email": "gui1207@gmail.com",
+  "preferences": [
+    "TV_SHOWS",
+    "SPORTS",
+    "MOVIES",
+    "DOCUMENTARIES"
+  ],
+  "addresses": [
+    {
+      "id": "1a73a523-aac3-4272-8db2-9538770daa7b",
+      "address": "139 Street",
+      "complement": "",
+      "neighborhood": "West London",
+      "zipcode": "W3 00TY",
+      "city": "London",
+      "country": "UK",
+      "primary": true
+    }
+  ],
+  "telephones": [
+    {
+      "id": "ce427a3b-ee6e-4812-9207-af33923e22e8",
+      "type": "MOBILE",
+      "countryCode": "+44",
+      "number": "07902380432"
+    }
+  ],
+  "paymnetMethods": [
+    {
+      "id": "b29ffd16-06fb-4311-a3ab-93f7f2bc3bfc",
+      "name": "MASTERCARD-Platinum",
+      "primary": true,
+      "creditCard": {
+        "id": "e4688112-323c-4be9-b0b4-d0209c65da6e",
+        "holderName": "Guilherme Pereira",
+        "type": "MASTERCARD",
+        "number": "5237784858471868",
+        "expiration": {
+          "month": 12,
+          "year": 2026
+        },
+        "cvv": "877"
+      }
+    }
+  ]
+}

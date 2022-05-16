@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:account-data-process-api="http://www.mulesoft.org/schema/mule/account-data-process-api"
+	xmlns:customer-data-process-api="http://www.mulesoft.org/schema/mule/customer-data-process-api" xmlns:broadband-system-api="http://www.mulesoft.org/schema/mule/broadband-system-api"
+	xmlns:billing-system-api="http://www.mulesoft.org/schema/mule/billing-system-api"
+	xmlns:contract-system-api="http://www.mulesoft.org/schema/mule/contract-system-api" xmlns:customer-system-api="http://www.mulesoft.org/schema/mule/customer-system-api" xmlns:customer-payment-method-system-api="http://www.mulesoft.org/schema/mule/customer-payment-method-system-api" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/customer-payment-method-system-api http://www.mulesoft.org/schema/mule/customer-payment-method-system-api/current/mule-customer-payment-method-system-api.xsd
+http://www.mulesoft.org/schema/mule/customer-system-api http://www.mulesoft.org/schema/mule/customer-system-api/current/mule-customer-system-api.xsd
+http://www.mulesoft.org/schema/mule/contract-system-api http://www.mulesoft.org/schema/mule/contract-system-api/current/mule-contract-system-api.xsd
+http://www.mulesoft.org/schema/mule/billing-system-api http://www.mulesoft.org/schema/mule/billing-system-api/current/mule-billing-system-api.xsd
+http://www.mulesoft.org/schema/mule/broadband-system-api http://www.mulesoft.org/schema/mule/broadband-system-api/current/mule-broadband-system-api.xsd
+http://www.mulesoft.org/schema/mule/customer-data-process-api http://www.mulesoft.org/schema/mule/customer-data-process-api/current/mule-customer-data-process-api.xsd
+http://www.mulesoft.org/schema/mule/account-data-process-api http://www.mulesoft.org/schema/mule/account-data-process-api/current/mule-account-data-process-api.xsd">
+
+	<http:listener-config name="api-httpsListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
+			<tls:context >
+				<tls:key-store type="pkcs12" path="keystore.pkcs12" alias="mule" keyPassword="${tls.password}" password="${tls.password}" />
+			</tls:context>
+		</http:listener-connection>
+    </http:listener-config>
+    
+	<global-property doc:name="Global Property" doc:id="75e3d86b-ed4f-400b-9067-5c97e12a9ce0" name="mule.env" value="dev" />
+	<configuration-properties doc:name="Configuration properties" doc:id="8129bf21-56f0-4f78-b05c-d97b6773096a" file="properties/${mule.env}-properties.yaml" />
+	<!-- 
+	<api-gateway:autodiscovery apiId="${apiId}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="647392bd-a798-424f-802d-ba1e3f27f3a4" flowRef="customer-profile-experience-api-main" />
+	 -->
+	<http:request-config name="HTTP_Request_Customer_Prc_API" doc:name="HTTP Request configuration" doc:id="9657808e-0315-4257-9ccc-2c196289f552" basePath="${customer-prc.basePath}">
+		<http:request-connection protocol="${customer-prc.protocol}" host="${customer-prc.host}" port="${customer-prc.port}" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_Account_Prc_API" doc:name="HTTP Request configuration" doc:id="c2f06bd4-dbc3-43eb-8867-fcf12a6910b8" basePath="${account-prc.basePath}" >
+		<http:request-connection protocol="${account-prc.protocol}" host="${account-prc.host}" port="${account-prc.port}" />
+	</http:request-config>
+			
+</mule>

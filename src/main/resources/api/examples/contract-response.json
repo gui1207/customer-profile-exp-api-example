@@ -1,0 +1,75 @@
+{
+  "id": "bb517650-38b7-4055-9332-21aea06fe566",
+  "customerId": "cec719c0-1492-4696-ba40-763d1b6bec2f",
+  "initiation": "2021-01-01T12:00:00",
+  "expiration": "2022-01-01T12:00:00",
+  "services": [
+    {
+      "id": "db898fb7-485c-4fa2-b498-5c552164d963",
+      "type": "BROADBAND"
+    }
+  ],
+  "totalAmount": {
+    "currency": "GBP",
+    "amount": 30
+  },
+  "broadband": [
+    {
+      "id": "c4db63c8-2eb9-4111-97b0-698991b2e2fa",
+      "contractId": "bb517650-38b7-4055-9332-21aea06fe566",
+      "networkdStatus": "ACTIVE",
+      "maxSpeed": 300,
+      "minSpeed": 100,
+      "linkData": {
+        "used": 6560
+      }
+    }
+  ],
+  "billingHistory": [
+    {
+      "id": "c6d3b98f-d1a5-4dcf-be0b-704da570f4cb",
+      "contractId": "bb517650-38b7-4055-9332-21aea06fe566",
+      "customerId": "cec719c0-1492-4696-ba40-763d1b6bec2f",
+      "timestamp": "2021-03-10T13:12:34.090Z",
+      "totalAmount": {
+        "currency": "GBP",
+        "amount": 30
+      },
+      "status": "SUCCESSFUL",
+      "paymentMethodInfo": {
+        "paymnetMethodNumber": "5237784858471868",
+        "paymentMethodType": "MASTERCARD"
+      }
+    },
+    {
+      "id": "4a23f65a-7f6f-4a79-ad81-2b1094c1c1ae",
+      "contractId": "bb517650-38b7-4055-9332-21aea06fe566",
+      "customerId": "cec719c0-1492-4696-ba40-763d1b6bec2f",
+      "timestamp": "2021-02-10T14:35:49.090Z",
+      "totalAmount": {
+        "currency": "GBP",
+        "amount": 30
+      },
+      "status": "SUCCESSFUL",
+      "paymentMethodInfo": {
+        "paymnetMethodNumber": "5237784858471868",
+        "paymentMethodType": "MASTERCARD"
+      }
+    },
+    {
+      "id": "314c2bda-c463-49d0-9598-33b34c01b830",
+      "contractId": "bb517650-38b7-4055-9332-21aea06fe566",
+      "customerId": "cec719c0-1492-4696-ba40-763d1b6bec2f",
+      "timestamp": "2021-01-10T12:41:30.090Z",
+      "totalAmount": {
+        "currency": "GBP",
+        "amount": 30
+      },
+      "status": "SUCCESSFUL",
+      "paymentMethodInfo": {
+        "paymnetMethodNumber": "5237784858471868",
+        "paymentMethodType": "MASTERCARD"
+      }
+    }
+  ]
+}
